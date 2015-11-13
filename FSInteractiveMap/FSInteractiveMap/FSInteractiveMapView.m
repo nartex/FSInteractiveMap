@@ -42,6 +42,8 @@
 {
     _svg = [FSSVG svgWithFile:mapName];
     
+    CGRect rect = CGRectZero;
+    
     for (FSSVGPathElement* path in _svg.paths) {
         // Make the map fits inside the frame
         float scaleHorizontal = self.frame.size.width / _svg.bounds.size.width;
@@ -61,6 +63,31 @@
         // Setting CAShapeLayer properties
         shapeLayer.strokeColor = self.strokeColor.CGColor;
         shapeLayer.lineWidth = 0.5;
+        rect = CGRectUnion(rect, CGPathGetPathBoundingBox(scaled.CGPath));
+    }
+    
+    for (FSSVGPathElement* path in _svg.paths) {
+        // Make the map fits inside the frame
+        float scaleHorizontal = self.frame.size.width / _svg.bounds.size.width;
+        float scaleVertical = self.frame.size.height / _svg.bounds.size.height;
+        float scale = MIN(scaleHorizontal, scaleVertical);
+        
+        CGAffineTransform scaleTransform = CGAffineTransformIdentity;
+        scaleTransform = CGAffineTransformMakeScale(scale, scale);
+        scaleTransform = CGAffineTransformTranslate(scaleTransform,-_svg.bounds.origin.x, -_svg.bounds.origin.y);
+        
+        UIBezierPath* scaled = [path.path copy];
+        [scaled applyTransform:scaleTransform];
+        
+        CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+        shapeLayer.path = scaled.CGPath;
+        
+        // Setting CAShapeLayer properties
+        shapeLayer.strokeColor = self.strokeColor.CGColor;
+        shapeLayer.lineWidth = 0.5;
+        float x = shapeLayer.frame.origin.x + (self.frame.size.width - rect.size.width) / 2;
+        float y = shapeLayer.frame.origin.y + (self.frame.size.height - rect.size.height) / 2;
+        shapeLayer.frame = CGRectMake(x, y, shapeLayer.frame.size.width, shapeLayer.frame.size.height);
         
         if(path.fill) {
             if(colorsDict && [colorsDict objectForKey:path.identifier]) {
@@ -75,7 +102,7 @@
         }
         
         [self.layer addSublayer:shapeLayer];
-        
+        self.layer.shouldRasterize = YES;
         [_scaledPaths addObject:scaled];
     }
 }
