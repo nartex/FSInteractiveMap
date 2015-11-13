@@ -74,7 +74,7 @@
         
         CGAffineTransform scaleTransform = CGAffineTransformIdentity;
         scaleTransform = CGAffineTransformMakeScale(scale, scale);
-        scaleTransform = CGAffineTransformTranslate(scaleTransform,-_svg.bounds.origin.x, -_svg.bounds.origin.y);
+        scaleTransform = CGAffineTransformTranslate(scaleTransform,-_svg.bounds.origin.x + (self.frame.size.width - rect.size.width) / 2, -_svg.bounds.origin.y + (self.frame.size.height - rect.size.height) / 2);
         
         UIBezierPath* scaled = [path.path copy];
         [scaled applyTransform:scaleTransform];
