@@ -85,9 +85,6 @@
         // Setting CAShapeLayer properties
         shapeLayer.strokeColor = self.strokeColor.CGColor;
         shapeLayer.lineWidth = 0.5;
-        float x = shapeLayer.frame.origin.x + (self.frame.size.width - rect.size.width) / 2;
-        float y = shapeLayer.frame.origin.y + (self.frame.size.height - rect.size.height) / 2;
-        shapeLayer.frame = CGRectMake(x, y, shapeLayer.frame.size.width, shapeLayer.frame.size.height);
         
         if(path.fill) {
             if(colorsDict && [colorsDict objectForKey:path.identifier]) {
